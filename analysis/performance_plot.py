@@ -1,3 +1,5 @@
+# Performance analysis module enhanced with logging and clarity by Aakash Sharma
+
 import matplotlib.pyplot as plt
 import time
 import socket
@@ -15,6 +17,8 @@ def generate_test_image(size_kb, path):
     from PIL import Image
     import random
 
+    print(f"[ANALYSIS] Generating test image of size ~{size_kb} KB...")
+
     # Approximate: each pixel = 3 bytes (RGB)
     pixels_needed = (size_kb * 1024) // 3
     width = int(pixels_needed ** 0.5)
@@ -25,6 +29,7 @@ def generate_test_image(size_kb, path):
               for _ in range(width * height)]
     img.putdata(pixels)
     img.save(path, 'JPEG')
+
     actual_size = os.path.getsize(path) / 1024
     print(f"[ANALYSIS] Generated test image: {path} (~{actual_size:.1f} KB)")
     return path
@@ -33,10 +38,14 @@ def generate_test_image(size_kb, path):
 def measure_conversion_time(filepath, target_format):
     """Send file to server and measure round-trip conversion time."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
     try:
+        print(f"[ANALYSIS] Connecting to server at {HOST}:{SERVER_PORT}...")
         sock.connect((HOST, SERVER_PORT))
+
         send_message(sock, target_format)
 
+        print("[ANALYSIS] Sending file for conversion...")
         start = time.time()
         send_file(sock, filepath)
 
@@ -45,13 +54,18 @@ def measure_conversion_time(filepath, target_format):
             print(f"[ANALYSIS] Server error: {status}")
             return None
 
+        print("[ANALYSIS] Receiving converted file...")
         receive_file(sock, save_dir="analysis_outputs")
+
         elapsed = time.time() - start
+        print(f"[ANALYSIS] Conversion completed in {elapsed:.3f} seconds")
 
         return elapsed
+
     except Exception as e:
-        print(f"[ANALYSIS] Error: {e}")
+        print(f"[ANALYSIS] Error during measurement: {e}")
         return None
+
     finally:
         sock.close()
 
@@ -80,6 +94,8 @@ def run_analysis():
         else:
             times.append(0)
 
+    print("[ANALYSIS] Generating performance graph...")
+
     # Plot results
     plt.figure(figsize=(10, 6))
     plt.plot(sizes_kb, times, marker='o', color='steelblue', linewidth=2, markersize=8)
@@ -95,11 +111,13 @@ def run_analysis():
     for x, y in zip(sizes_kb, times):
         plt.annotate(f"{y:.2f}s", (x, y), textcoords="offset points",
                      xytext=(0, 10), ha='center', fontsize=9)
+
     plt.xscale('log')  # spreads out the x-axis nicely
-    
+
     plt.tight_layout()
     plot_path = "analysis/performance_result.png"
     plt.savefig(plot_path, dpi=150)
+
     print(f"[ANALYSIS] Plot saved to {plot_path}")
     plt.show()
 
