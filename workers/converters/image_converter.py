@@ -1,4 +1,4 @@
-# Image conversion module enhanced with logging by Aakash Sharma
+# Image conversion module enhanced with logging
 
 from PIL import Image  #PILLOW library is being used
 import os
