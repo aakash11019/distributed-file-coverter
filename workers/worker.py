@@ -11,7 +11,7 @@ from shared.protocols import receive_file, send_file, receive_message
 from workers.converters import image_converter, doc_converter, video_converter
 
 
-WORK_DIR = "worker_temp"
+WORK_DIR = "worker_temp"  # temporary folder where files are stored
 
 
 def pick_converter(input_path, target_format):
