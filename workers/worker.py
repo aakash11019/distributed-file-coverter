@@ -1,4 +1,4 @@
-# Worker module enhanced with logging and error handling by Aakash Sharma
+# Worker module enhanced with logging and error handling 
 
 import socket
 import sys
