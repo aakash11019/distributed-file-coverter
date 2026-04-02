@@ -1,4 +1,4 @@
-# Video conversion module enhanced with logging by Aakash Sharma
+# Video conversion module enhanced with logging 
 
 import os
 import subprocess
