@@ -1,3 +1,5 @@
+# Image conversion module enhanced with logging by Aakash Sharma
+
 from PIL import Image  #PILLOW library is being used
 import os
 
