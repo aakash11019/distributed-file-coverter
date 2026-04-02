@@ -1,4 +1,4 @@
-# Document conversion module enhanced with logging and validation by Aakash Sharma
+# Document conversion module enhanced with logging and validation
 
 import os
 import subprocess
