@@ -1,4 +1,4 @@
-# Performance analysis module enhanced with logging and clarity by Aakash Sharma
+# Performance analysis module enhanced with logging and clarity 
 
 import matplotlib.pyplot as plt
 import time
@@ -6,7 +6,7 @@ import socket
 import os
 import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # Adds parent folder so we can import project modules
 
 from shared.config import HOST, SERVER_PORT
 from shared.protocols import send_file, receive_file, send_message, receive_message
@@ -15,19 +15,19 @@ from shared.protocols import send_file, receive_file, send_message, receive_mess
 def generate_test_image(size_kb, path):
     """Generate a test image of approximately size_kb kilobytes."""
     from PIL import Image
-    import random
+    import random # random pixels are imported
 
     print(f"[ANALYSIS] Generating test image of size ~{size_kb} KB...")
 
     # Approximate: each pixel = 3 bytes (RGB)
     pixels_needed = (size_kb * 1024) // 3
     width = int(pixels_needed ** 0.5)
-    height = width
+    height = width  # making square image
 
-    img = Image.new('RGB', (width, height))
-    pixels = [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    img = Image.new('RGB', (width, height)) # creates blank image
+    pixels = [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) # generates random colors
               for _ in range(width * height)]
-    img.putdata(pixels)
+    img.putdata(pixels) # put pixels in image
     img.save(path, 'JPEG')
 
     actual_size = os.path.getsize(path) / 1024
@@ -37,7 +37,7 @@ def generate_test_image(size_kb, path):
 
 def measure_conversion_time(filepath, target_format):
     """Send file to server and measure round-trip conversion time."""
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creates tcp socket    
 
     try:
         print(f"[ANALYSIS] Connecting to server at {HOST}:{SERVER_PORT}...")
@@ -57,7 +57,7 @@ def measure_conversion_time(filepath, target_format):
         print("[ANALYSIS] Receiving converted file...")
         receive_file(sock, save_dir="analysis_outputs")
 
-        elapsed = time.time() - start
+        elapsed = time.time() - start  # calculates total time 
         print(f"[ANALYSIS] Conversion completed in {elapsed:.3f} seconds")
 
         return elapsed
@@ -72,12 +72,12 @@ def measure_conversion_time(filepath, target_format):
 
 def run_analysis():
     """Run conversions across different file sizes and plot results."""
-    os.makedirs("test_files", exist_ok=True)
-    os.makedirs("analysis_outputs", exist_ok=True)
+    os.makedirs("test_files", exist_ok=True)  # Create folder for input
+    os.makedirs("analysis_outputs", exist_ok=True)  # Create folder for output
 
     # File sizes to test (in KB)
     sizes_kb = [50, 100, 200, 500, 1000, 2000]
-    times = []
+    times = [] # stores result
 
     print("[ANALYSIS] Starting performance analysis...")
 
@@ -86,10 +86,10 @@ def run_analysis():
         generate_test_image(size, test_path)
 
         print(f"[ANALYSIS] Testing {size} KB file...")
-        elapsed = measure_conversion_time(test_path, "png")
+        elapsed = measure_conversion_time(test_path, "png") # converts image
 
         if elapsed is not None:
-            times.append(elapsed)
+            times.append(elapsed) # stores time
             print(f"[ANALYSIS] {size} KB → {elapsed:.3f} seconds")
         else:
             times.append(0)
@@ -123,4 +123,4 @@ def run_analysis():
 
 
 if __name__ == "__main__":
-    run_analysis()
+    run_analysis()  # runs program
