@@ -1,3 +1,5 @@
+# Worker module enhanced with logging and error handling by Aakash Sharma
+
 import socket
 import sys
 import os
@@ -32,17 +34,21 @@ def handle_job(conn):
         # Step 1: receive target format
         target_format = receive_message(conn)
         print(f"[WORKER] Target format: {target_format}")
+        print("[WORKER] Preparing to receive file...")
 
         # Step 2: receive file
         input_path = receive_file(conn, save_dir=WORK_DIR)
         print(f"[WORKER] Received file: {input_path}")
+        print("[WORKER] Selecting appropriate converter...")
 
         # Step 3: convert
         converter = pick_converter(input_path, target_format)
         if converter is None:
             raise ValueError(f"No converter for {input_path} → {target_format}")
 
+        print("[WORKER] Starting file conversion...")
         output_path = converter.convert(input_path, target_format)
+        print("[WORKER] Conversion completed successfully.")
 
         # Step 4: send result back
         send_file(conn, output_path)
@@ -53,7 +59,7 @@ def handle_job(conn):
         os.remove(output_path)
 
     except Exception as e:
-        print(f"[WORKER] Error: {e}")
+        print(f"[WORKER] Error occurred during job processing: {e}")
     finally:
         conn.close()
 
